@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Fancy Clock</title>
+	<script type="text/javascript" src="../scripts/clock.js"></script>
+	<script type="text/javascript" src="../scripts/drawer.js"></script>
+	<link rel="stylesheet" type="text/css" href="../css/clockDesign.css">
+	<script>
+		window.onload = function() {
+			var canvas = document.getElementById('canvas'),
+				context = canvas.getContext('2d'),
+				PI2 = Math.PI*2;
+
+			function degToRad(degree) {
+				var factor = Math.PI / 180;
+				return degree * factor;
+			}
+
+			function getX(degree, radius) {
+				return radius*Math.sin(degToRad(degree));
+			}
+
+			function getY(degree, radius) {
+				return radius*Math.cos(degToRad(degree));
+			}
+
+			function clock() {
+				var	date = new Date();
+
+				//background
+				context.rect(0, 0, canvas.width, canvas.height);
+				var grd = context.createRadialGradient(225,225,2, 225,225,180);
+				grd.addColorStop(0, "#181818");
+				grd.addColorStop(1, "#050505");
+				
+				context.fillStyle = grd;
+				context.fill();
+				
+				//time lines
+				context.strokeStyle = "#0a0a0a";
+				context.lineWidth = 1;
+
+				for(i = 0; i < 3; i++) {
+					context.beginPath();
+					context.arc(225, 225, 200-(i*20), 0, PI2, false);
+					context.stroke();
+				}
+				//shield
+				var pIdl = 0, stepl = 30, r1l = 210, r2l = 190;
+				var begin = {x:0, y:0};
+				var end = {x:0, y:0};
+				var pIds = 0, steps = 6, r1s = 205, r2s = 195;
+				for(i = 0; i < 60; i++) {
+					if( i % 4 === 0 ) {
+						context.strokeStyle = "#6f6f6f";
+						context.lineWidth = 2;
+						begin.x = getX(pIdl, r1l) + 225;
+						begin.y = getY(pIdl, r1l) + 225;
+
+						end.x = getX(pIdl, r2l) + 225;
+						end.y = getY(pIdl, r2l) + 225;
+
+						pIdl += stepl;
+
+						context.beginPath();
+						context.moveTo(begin.x, begin.y);
+						context.lineTo(end.x, end.y);
+						context.stroke();
+					}
+
+					context.lineWidth = 1;
+					begin.x = getX(pIds, r1s) + 225;
+					begin.y = getY(pIds, r1s) + 225;
+
+					end.x = getX(pIds, r2s) + 225;
+					end.y = getY(pIds, r2s) + 225;
+
+					pIds += steps;
+
+					context.beginPath();
+					context.moveTo(begin.x, begin.y);
+					context.lineTo(end.x, end.y);
+					context.stroke();
+
+				}
+
+				Drawer.setArcDrawingStyle(1, "#6f6f6f", context);
+				Drawer.drawTime(225, 225, 200, Clock.getRealHours()*30, context);
+				Drawer.drawTime(225, 225, 180, Clock.getRealMinutes()*6, context);
+				Drawer.drawTime(225, 225, 160, Clock.getRealSeconds()*6, context);
+	
+				Drawer.printString("20px verdana bold", "#707070", Clock.getDay(), 145, 212, context);
+				Drawer.printString("15px verdana", "#707070", Clock.getTime(), 145, 237, context);
+				
+			}
+			setInterval(clock, 1000/50);
+		};
+	</script>
+</head>
+<body>
+	<h1>This will be my fancy clock!!</h1>
+	<h2>soon!</h2>
+	<div id="content">
+		<canvas id="canvas" width="450" height="450"></canvas>
+	</div>
+</body>
+</html>
