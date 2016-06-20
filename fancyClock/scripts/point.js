@@ -2,13 +2,9 @@ var Point = ( function() {
 	var point = {};
 	
 	/*	public section	*/
-
-	point.getXOnArc = function(radius, degree, centre) {
-		return radius * Math.sin(degree * (Math.PI / 180)) + centre;
-	}
-
-	point.getYOnArc = function(radius, degree, centre) {
-		return radius * Math.cos(degree * (Math.PI / 180)) + centre;
+	point.getPointOnArc = function(radius, degree, corX, corY) {
+		return {x : radius * Math.sin(degree * (Math.PI / 180)) + corX,
+				y : radius * Math.cos(degree * (Math.PI / 180)) + corY};
 	}
 
 	return point;
