@@ -4,9 +4,10 @@
 	<title>Fancy Clock</title>
 	<script type="text/javascript" src="../scripts/clock.js"></script>
 	<script type="text/javascript" src="../scripts/drawer.js"></script>
+	<script type="text/javascript" src="../scripts/point.js"></script>
 	<link rel="stylesheet" type="text/css" href="../css/clockDesign.css">
 	<script>
-		window.onload = function() {
+		document.addEventListener("DOMContentLoaded", function() {
 			var canvas = document.getElementById('canvas'),
 				context = canvas.getContext('2d'),
 				PI2 = Math.PI*2;
@@ -26,6 +27,7 @@
 
 			function clock() {
 				var	date = new Date();
+				Drawer.init(context);
 
 				//background
 				context.rect(0, 0, canvas.width, canvas.height);
@@ -37,69 +39,60 @@
 				context.fill();
 				
 				//time lines
-				context.strokeStyle = "#0a0a0a";
-				context.lineWidth = 1;
+				Drawer.setStrokeStyle(1, "#0a0a0a");
 
 				for(i = 0; i < 3; i++) {
-					context.beginPath();
-					context.arc(225, 225, 200-(i*20), 0, PI2, false);
-					context.stroke();
+					Drawer.drawArc(canvas.width/2, canvas.height/2, 
+						( (canvas.height < canvas.width) ? (canvas.height/2)-25-(i*20) : (canvas.width/2)-25-(i*20) ),
+						359.99, context);
 				}
-				//shield
-				var pIdl = 0, stepl = 30, r1l = 210, r2l = 190;
-				var begin = {x:0, y:0};
-				var end = {x:0, y:0};
-				var pIds = 0, steps = 6, r1s = 205, r2s = 195;
+
+				//clock face
+				var a,b;
+				var rad = ( (canvas.height < canvas.width) ? (canvas.height/2)-25 : (canvas.width/2)-25 );
+				var degree = 0;
+				
 				for(i = 0; i < 60; i++) {
-					if( i % 4 === 0 ) {
-						context.strokeStyle = "#6f6f6f";
-						context.lineWidth = 2;
-						begin.x = getX(pIdl, r1l) + 225;
-						begin.y = getY(pIdl, r1l) + 225;
+					if( i % 5 === 0 ) {
+						Drawer.setStrokeStyle(2, "#6f6f6f");
 
-						end.x = getX(pIdl, r2l) + 225;
-						end.y = getY(pIdl, r2l) + 225;
+						a = {	x:	Point.getXOnArc(rad + 10, degree, canvas.height/2),
+								y:  Point.getYOnArc(rad + 10, degree, canvas.height/2)};
 
-						pIdl += stepl;
+						b = { 	x:	Point.getXOnArc(rad - 10, degree, canvas.height/2),
+								y:  Point.getYOnArc(rad - 10, degree, canvas.height/2)}; 
 
-						context.beginPath();
-						context.moveTo(begin.x, begin.y);
-						context.lineTo(end.x, end.y);
-						context.stroke();
+						Drawer.drawLine(a, b);
+						degree += 6;
+					} else {
+						Drawer.setStrokeStyle(1, "#6f6f6f");
+						
+						a = {	x:	Point.getXOnArc(rad + 5, degree, canvas.height/2),
+								y:  Point.getYOnArc(rad + 5, degree, canvas.height/2)};
+
+						b = { 	x:	Point.getXOnArc(rad - 5, degree, canvas.height/2),
+								y:  Point.getYOnArc(rad - 5, degree, canvas.height/2)};
+
+						degree += 6;
+
+						Drawer.drawLine(a, b);
 					}
-
-					context.lineWidth = 1;
-					begin.x = getX(pIds, r1s) + 225;
-					begin.y = getY(pIds, r1s) + 225;
-
-					end.x = getX(pIds, r2s) + 225;
-					end.y = getY(pIds, r2s) + 225;
-
-					pIds += steps;
-
-					context.beginPath();
-					context.moveTo(begin.x, begin.y);
-					context.lineTo(end.x, end.y);
-					context.stroke();
-
 				}
 
-				Drawer.setArcDrawingStyle(1, "#6f6f6f", context);
-				Drawer.drawTime(225, 225, 200, Clock.getRealHours()*30, context);
-				Drawer.drawTime(225, 225, 180, Clock.getRealMinutes()*6, context);
-				Drawer.drawTime(225, 225, 160, Clock.getRealSeconds()*6, context);
+				Drawer.setStrokeStyle(1, "#6f6f6f");
+				Drawer.drawArc(225, 225, 200, Clock.getRealHours()*30);
+				Drawer.drawArc(225, 225, 180, Clock.getRealMinutes()*6);
+				Drawer.drawArc(225, 225, 160, Clock.getRealSeconds()*6);
 	
-				Drawer.printString("20px verdana bold", "#707070", Clock.getDay(), 145, 212, context);
-				Drawer.printString("15px verdana", "#707070", Clock.getTime(), 145, 237, context);
+				Drawer.printString("20px verdana bold", "#707070", Clock.getDay(), 145, 212);
+				Drawer.printString("15px verdana", "#707070", Clock.getTime(), 145, 237);
 				
 			}
 			setInterval(clock, 1000/50);
-		};
+		});
 	</script>
 </head>
 <body>
-	<h1>This will be my fancy clock!!</h1>
-	<h2>soon!</h2>
 	<div id="content">
 		<canvas id="canvas" width="450" height="450"></canvas>
 	</div>
