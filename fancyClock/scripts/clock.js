@@ -1,11 +1,8 @@
 var Clock = (function () {
 	var clock = {};
 
-	/*	all *Static* methods return an INTEGER, *Real* methods return floats
-	*	eg. if time = 11:31:54, then getStaticHours would return 11,
-	*	the getRealHour would return something like 11.50333, which gives us 
-	*	better visual effect on the clock face	*/
-
+	/*	'Static' functions return only full hours, minutes or seconds
+	*	the 'Real' returns exact */
 	clock.getStaticHours = function() {
 		return new Date().getHours();
 	};

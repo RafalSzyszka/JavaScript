@@ -7,6 +7,7 @@
 	<script type="text/javascript" src="../scripts/drawer.js"></script>
 	<script type="text/javascript" src="../scripts/point.js"></script>
 	<script type="text/javascript" src="../scripts/clockFace.js"></script>
+	<script type="text/javascript" src="../scripts/fancyClock.js"></script>
 
 	<link rel="stylesheet" type="text/css" href="../css/clockDesign.css">
 	<script>
@@ -14,40 +15,36 @@
 			var canvas = document.getElementById('canvas'),
 				context = canvas.getContext('2d');
 
+			//GETTING THE SMALLER RADIUS FOR BETTER DISPLAY
+			var radius = ( (canvas.height < canvas.width) ? (canvas.height/2)-25 : (canvas.width/2)-25 );
+
 			function clock() {
-				var	date = new Date();
-				Drawer.init(context);
-
-				//getting the smaller radius.
-				var radius = ( (canvas.height < canvas.width) ? (canvas.height/2)-25 : (canvas.width/2)-25 );
-
-				//background
-				context.rect(0, 0, canvas.width, canvas.height);
-				var grd = context.createRadialGradient(canvas.width/2, canvas.height/2, radius/100,
-													   canvas.width/2, canvas.height/2, radius);
-				grd.addColorStop(0, "#181828");
-				grd.addColorStop(1, "#050507");
 				
-				context.fillStyle = grd;
-				context.fill();
+				FancyClock.initFancyClock(context);
 
-				//clock face
-				ClockFace.initDrawer(context);
-				ClockFace.printClockFace(radius, {x:canvas.width/2, y:canvas.height/2}, 10, 5, 20);
+				FancyClock.drawFancyBackground(
+			/*clock's background size	*/	{width: canvas.width, height: canvas.height},
+			/*first circle's centre  	*/	{x: canvas.width/2,   y:canvas.height/2},
+			/*first circle's radius  	*/	20, 
+			/*second circle's centre 	*/	{x: canvas.width/2,   y:canvas.height/2},
+			/*second circle's radius 	*/	225,
+			/*first circle's color   	*/	"#181828",
+			/*second circle's color 	*/	"#050507");
 
-				Drawer.setStrokeStyle(2, "#6f6f6f");
-				Drawer.drawArcPart(canvas.width/2, canvas.height/2, radius, Clock.getRealHours()*30, 12.5);				
-				Drawer.drawArcPart(canvas.width/2, canvas.height/2, radius - 20, Clock.getRealMinutes()*6, 25);
-				Drawer.drawArcPart(canvas.width/2, canvas.height/2, radius - 40, Clock.getRealSeconds()*6, 50);
-	
-				Drawer.printString("20px verdana bold", "#707070", Clock.getDay(), 145, 212);
-				Drawer.printString("15px verdana", "#707070", Clock.getTime(), 145, 237);
+				FancyClock.drawFancyClockFace(
+			/*radius 	*/	radius, 
+			/*centre 	*/	{x: canvas.width/2, y: canvas.height/2},
+			/*lSize  	*/	10, 
+			/*sSize  	*/	5, 
+			/*diff		*/	20);
 
-				Drawer.setStrokeStyle(2, "#000000");
-				Drawer.setFillStyle("#aa5500");
-				Drawer.drawFilledCircle(Point.getPointOnArc(radius, -(Clock.getRealHours()*30 + 180), 										canvas.width/2, canvas.height/2), 7);
-				Drawer.drawFilledCircle(Point.getPointOnArc(radius - 20, -(Clock.getRealMinutes()*6 + 180), 										canvas.width/2, canvas.height/2), 7);
-				Drawer.drawFilledCircle(Point.getPointOnArc(radius - 40, -(Clock.getRealSeconds()*6 + 180), 										canvas.width/2, canvas.height/2), 7);
+				FancyClock.drawFancyTime(
+			/*tailStyle	*/	{lineWidth: 2, lineColor: "#6f6f6f"},
+			/*centre 	*/	{x: canvas.width/2, y: canvas.height/2},
+			/*radius 	*/	radius,
+			/*diff		*/	20,
+			/*handStyle */	{lineWidth: 1, lineColor: "#000000", fillColor: "#aa5500"},
+			/*handSize  */	7);				
 				
 			}
 			setInterval(clock, 1000/50);
